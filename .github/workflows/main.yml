@@ -22,6 +22,7 @@ jobs:
         - { name: Linux,             os: ubuntu-latest,  shell: sh,  vendored: false, cmake: '-GNinja', shared: 1, static: 0, noavif: true, nojxl: true, artifact: 'SDL3_image-linux-x64' }
         - { name: 'Linux (static)',  os: ubuntu-latest,  shell: sh,  vendored: true, cmake: '-DBUILD_SHARED_LIBS=OFF -GNinja', shared: 0, static: 1, artifact: 'SDL3_image-static-linux-x64' }
         - { name: Macos,             os: macos-latest,   shell: sh,  vendored: false, cmake: '-GNinja', shared: 1, static: 0, artifact: 'SDL3_image-macos' }
+        - { name: 'Macos (intel)',   os: macos-13,       shell: sh,  vendored: false, cmake: '-GNinja', shared: 1, static: 0, artifact: 'SDL3_image-macos' }
 
     steps:
 
