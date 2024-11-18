@@ -63,12 +63,16 @@ jobs:
     - name: Set up Macos dependencies
       if: ${{ runner.os == 'macOS' && !matrix.platform.vendored }}
       run: |
+        sudo rm -rf /Library/Developer/CommandLineTools
+        brew update || true
         brew install \
           gd \
           jpeg-xl \
           libavif \
           webp \
           ${NULL+}
+        brew upgrade gd
+        brew reinstall gd
     - name: Set up Linux dependencies
       if: ${{ runner.os == 'Linux' && !matrix.platform.vendored }}
       run: |
