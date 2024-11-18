@@ -61,7 +61,7 @@ jobs:
         sdl-test: true
         shell: ${{ matrix.platform.shell }}
     - name: Set up Macos dependencies
-      if: ${{ runner.os == 'macOS' && !matrix.platform.vendored }}
+      if: ${{ runner.os == 'macOS' }}
       run: |
         sudo rm -rf /Library/Developer/CommandLineTools
         brew update || true
