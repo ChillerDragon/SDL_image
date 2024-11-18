@@ -64,6 +64,7 @@ jobs:
       if: ${{ runner.os == 'macOS' && !matrix.platform.vendored }}
       run: |
         brew install \
+          gd \
           jpeg-xl \
           libavif \
           webp \
