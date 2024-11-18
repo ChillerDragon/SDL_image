@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
+message(STATUS "HELLO FROM chiller_test sdl image")
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # See docs/release_checklist.md
@@ -43,6 +45,7 @@ endif()
 
 set(sdlimage_install_enableable ON)
 if((TARGET SDL3-shared OR TARGET SDL3-static) AND SDL_DISABLE_INSTALL)
+    message(STATUS "Cannot install SDL3_image when SDL3 is built in same built, and is not installed.")
     # Cannot install SDL3_image when SDL3 is built in same built, and is not installed.
     set(sdlimage_install_enableable OFF)
 endif()
