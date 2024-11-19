@@ -109,8 +109,6 @@ jobs:
         cmake -B build \
           -DSDLIMAGE_VENDORED=${{ matrix.platform.vendored }} \
           -DBUILD_SHARED_LIBS=ON \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DCMAKE_INSTALL_PREFIX=prefix_cmake \
           -DCMAKE_LIBRARY_OUTPUT_DIRECTORY_RELEASE=$PWD/build \
           -DCMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE=$PWD/build \
           ${{ matrix.platform.cmake }}
