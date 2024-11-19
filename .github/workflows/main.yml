@@ -20,7 +20,6 @@ jobs:
         - { name: Windows (mingw64), os: windows-latest, shell: 'msys2 {0}', vendored: false, msystem: mingw64, msys-env: mingw-w64-x86_64,
             cmake: '-DSDLIMAGE_BACKEND_STB=OFF -DSDLIMAGE_BACKEND_WIC=OFF  -DSDLIMAGE_AVIF=ON -G "Ninja Multi-Config"' }
         - { name: Linux,             os: ubuntu-latest,  shell: sh,  vendored: false, cmake: '-GNinja', noavif: true, nojxl: true }
-        - { name: 'Linux (static)',  os: ubuntu-latest,  shell: sh,  vendored: true, cmake: '-DBUILD_SHARED_LIBS=OFF -GNinja' }
         - { name: Macos,             os: macos-latest,   shell: sh,  vendored: false, cmake: '-GNinja' }
 
     steps:
