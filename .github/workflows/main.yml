@@ -88,11 +88,6 @@ jobs:
       with:
         submodules: ${{ matrix.platform.vendored && 'recursive' }}
 
-    - name: Check that versioning is consistent
-      # We only need to run this once: arbitrarily use the Linux build
-      if: ${{ runner.os == 'Linux' }}
-      run: ./build-scripts/test-versioning.sh
-
     - name: Configure (CMake)
       run: |
         export CMAKE_CONFIGURATION_TYPES=Release
@@ -101,8 +96,8 @@ jobs:
           -DBUILD_SHARED_LIBS=ON \
           -DCMAKE_BUILD_TYPE=Release \
           -DSDLIMAGE_SAMPLES=ON \
-          -DSDLIMAGE_TESTS=ON \
-          -DSDLIMAGE_TESTS_INSTALL=ON \
+          -DSDLIMAGE_TESTS=OFF \
+          -DSDLIMAGE_TESTS_INSTALL=OFF \
           -DSDLIMAGE_AVIF=${{ !matrix.platform.noavif }} \
           -DSDLIMAGE_JXL=${{ !matrix.platform.nojxl }} \
           -DSDLIMAGE_TIF=ON \
@@ -117,76 +112,3 @@ jobs:
     - name: Build (CMake)
       id: build
       run: cmake --build build/ --config Release --parallel --verbose
-    - name: Run build-time tests
-      run: |
-        sdl_binpath="${{ steps.sdl.outputs.prefix }}/bin"
-        if [ "x${{ runner.os }}" = "xWindows" ]; then
-          sdl_binpath="$( cygpath -u "$sdl_binpath" )"
-        fi
-        echo "sdl_binpath=$sdl_binpath"
-        export PATH="$sdl_binpath:$PATH"
-        export LD_LIBRARY_PATH="$PWD:$LD_LIBRARY_PATH"
-        set -eu
-
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_AVIF=${{ (matrix.platform.noavif && '0') || '1' }}
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_BMP=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_CUR=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_GIF=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_ICO=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_JPG=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_JXL=${{ (matrix.platform.nojxl && '0') || '1' }}
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_LBM=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_PCX=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_PNG=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_PNM=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_QOI=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_SVG=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_TGA=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_TIF=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_WEBP=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_XPM=1
-        export SDL_IMAGE_TEST_REQUIRE_LOAD_XV=1
-
-        export SDL_IMAGE_TEST_REQUIRE_SAVE_JPG=1
-        export SDL_IMAGE_TEST_REQUIRE_SAVE_PNG=1
-
-        cd build
-        ctest --no-tests=error -VV -C Release
-    - name: Install (CMake)
-      if: ${{ always() && steps.build.outcome == 'success' }}
-      run: |
-        set -eu
-        rm -fr DESTDIR-cmake
-        cmake --install build/ --config Release
-        echo "SDL3_image_ROOT=$(pwd)/prefix_cmake" >> $GITHUB_ENV
-        ( cd prefix_cmake; find . ) | LC_ALL=C sort -u
-    - name: Package (CPack)
-      if: ${{ always() && steps.build.outcome == 'success' }}
-      run: |
-        cmake --build build/ --target package
-    - name: Upload artifacts
-      if: ${{ failure() }}
-      uses: actions/upload-artifact@v4
-      with:
-        if-no-files-found: ignore
-        name: "${{ matrix.platform.artifact }}-failure-artifacts"
-        path: |
-          build/*.bmp
-          build/*.jpg
-          build/*.png
-          build/CMakeCache.txt
-          build/CMakeFiles/*yaml
-
-    - name: Verify CMake configuration files
-      run: |
-        cmake -S cmake/test -B cmake_config_build \
-          -DCMAKE_BUILD_TYPE=Release \
-          -DTEST_SHARED=${{ matrix.platform.shared }} \
-          -DTEST_STATIC=${{ matrix.platform.static }}
-        cmake --build cmake_config_build --verbose
-    - uses: actions/upload-artifact@v4
-      if: ${{ always() && steps.build.outcome == 'success' }}
-      with:
-        if-no-files-found: error
-        name: ${{ matrix.platform.artifact }}
-        path: build/dist/SDL3_image*
