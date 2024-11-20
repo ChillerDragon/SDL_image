@@ -65,7 +65,7 @@ jobs:
       id: sdl
       uses: libsdl-org/setup-sdl@main
       with:
-        cmake-arguments: -DSDL_PRESEED=OFF
+        cmake-arguments: -DSDL_PRESEED=ON
         version: 3-head
         sdl-test: true
         shell: ${{ matrix.platform.shell }}
