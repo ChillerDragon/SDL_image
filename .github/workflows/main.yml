@@ -26,6 +26,7 @@ jobs:
             vendored: false
             msystem: mingw64
             msys-env: mingw-w64-x86_64
+            cmake: '-DSDLIMAGE_BACKEND_STB=OFF -DSDLIMAGE_BACKEND_WIC=OFF  -DSDLIMAGE_AVIF=ON'
           - name: Linux
             os: ubuntu-latest
             shell: sh
